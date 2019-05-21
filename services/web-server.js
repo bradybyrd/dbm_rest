@@ -1,6 +1,7 @@
 const http = require('http');
 const express = require('express');
 const webServerConfig = require('../config/web-server.js');
+const router = require('./router.js');
 const database = require('./database.js');
 const morgan = require('morgan');
  
@@ -11,6 +12,9 @@ function initialize() {
     const app = express();
 	// Add morgan logging to webserver
 	app.use(morgan('combined'));
+	// API routing
+	app.use('/api', router);
+	
     httpServer = http.createServer(app);
  
     app.get('/', async (req, res) => {
