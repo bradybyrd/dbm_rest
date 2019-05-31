@@ -21,7 +21,7 @@ function initialize() {
 	  const result = await database.simpleExecute('select user, systimestamp from dual');
 	  const user = result.rows[0].USER;
 	  const date = result.rows[0].SYSTIMESTAMP;
-      res.end(`Hello Datbase!\nDB User: ${user}\nDate: ${date}`);
+      res.end(`Hello Database!\nDB User: ${user}\nDate: ${date}`);
     });
  
     httpServer.listen(webServerConfig.port)

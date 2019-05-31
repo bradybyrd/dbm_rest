@@ -1,3 +1,6 @@
+
+Following: https://jsao.io/2018/03/creating-a-rest-api-with-node-js-and-oracle-database/
+
 PS C:\automation\dev\dbm_rest> node -v
 v8.9.4
 PS C:\automation\dev\dbm_rest> npm init -y
