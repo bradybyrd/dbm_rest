@@ -1,18 +1,20 @@
 const packages = require('../models/packages.js');
 
 async function get(req, res, next) {
+	// api/projects/:id/packages
 	try {
 		const context = {};
 		context.project_id = parseInt(req.params.project_id, 10);
 		context.id = parseInt(req.params.id, 10);
-		const rows = await packages.finder(context);
 		if (req.params.id) {
+			const rows = await packages.finder("by_id", context);		
 			if ( rows.length === 1) {
 				res.status(200).json(rows[0]);
 			} else {
 				res.status(404).end();
 			}
 		} else {
+			const rows = await packages.finder("by_project", context);		
 			res.status(200).json(rows);
 		}
 	} catch(err) {

@@ -38,6 +38,11 @@ async function finder(ftype, context) {
     binds.pipeline_id = context.pipeline_id    
     query += `\nwhere  pipeline_id = :pipeline_id`;
   }
+  }else if (ftype === "by_id"){
+    binds.id = context.id    
+    binds.pipeline_id = context.pipeline_id    
+    query += `\nwhere  pipeline_id = :pipeline_id AND id = :id`;
+  }
   const result = await database.simpleExecute(query, binds); 
   return result.rows;
 }
@@ -53,4 +58,5 @@ async function find_by_project(context) {
 }
  
 module.exports.find = find;
+module.exports.finder = finder;
 module.exports.find_by_name = find;

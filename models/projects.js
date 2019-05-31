@@ -10,7 +10,7 @@ const baseQuery =
  
 async function find(context) {
   let query = baseQuery;
-  const binds = {}; 
+  const binds = {};
   if (context.id) {
     binds.id = context.id; 
     query += `\nwhere proj.flowid = :id`;
