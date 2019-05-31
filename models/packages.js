@@ -37,7 +37,6 @@ async function finder(ftype, context) {
   }else if (ftype === "by_project"){
     binds.pipeline_id = context.pipeline_id    
     query += `\nwhere  pipeline_id = :pipeline_id`;
-  }
   }else if (ftype === "by_id"){
     binds.id = context.id    
     binds.pipeline_id = context.pipeline_id    

@@ -5,8 +5,8 @@ async function get(req, res, next) {
 	try {
 		const context = {};
 		context.project_id = parseInt(req.params.project_id, 10);
-		context.id = parseInt(req.params.id, 10);
 		if (req.params.id) {
+			context.id = parseInt(req.params.id, 10);
 			const rows = await packages.finder("by_id", context);		
 			if ( rows.length === 1) {
 				res.status(200).json(rows[0]);
