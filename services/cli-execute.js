@@ -52,33 +52,6 @@ function cliExecute(cmd, args = [], opts = {}) {
 
 module.exports.cliExecute = cliExecute;
 
-function checkSyntax (params) {
-  if( !params["action"] ) {
-    console.log("ERROR - Requires an action param")
-    return false;
-  }
-  cmdSyntax = config["commands"]
-  if( !Object.keys(cmdSyntax).includes(params["action"]) ) {
-    console.log(`ERROR - action param <${params["action"]}> not found`)
-    return false;
-  }
-  var fullSet = [];
-  fullSet = cmdSyntax["base"].concat(cmdSyntax[params["action"]]);
-  var success = true;
-  var resultMsg = "Syntax check: ";
-  fullSet.forEach( function(item) {
-    var hasIt = Object.keys(params).includes(item)
-    if( hasIt ) { 
-      resultMsg += item + ", ";
-    }else{
-      resultMsg += item + "(missing), ";
-      success = false;
-    }
-  });
-  return success;
-}
-module.exports.checkSyntax = checkSyntax;
-
 function filterValue(obj, value) {
   return obj["privileges"].filter((object) => {
    return object["resource"] == value

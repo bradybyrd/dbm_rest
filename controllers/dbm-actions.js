@@ -1,4 +1,4 @@
-const cliConfig = require('../config/cli-config.js');
+const cliConfig = require('../config/cli-config.json');
 const cli = require('../services/cli-execute.js');
 const cliParams = {
   "action" : "validate",
@@ -40,3 +40,55 @@ async function post(req, res, next) {
 }
 
 module.exports.post = post;
+
+function dbmApi(action, params, opts = {}){
+  console.log(`Starting DBm API command - ${action}`);
+  console.log(`Params: ${params}`);  
+  args = assembleArgs(action, params, opts);
+  cmd = cliConfig["general"]["java_cmd"];
+  cli.cliExecute(cmd, args);
+}
+
+module.exports.dbmApi = dbmApi;
+
+function checkSyntax (action, params, opts = {}) {
+  cmdSyntax = config["commands"]
+  var fullSet = [];
+  fullSet = cmdSyntax["base"].concat(cmdSyntax[action]);
+  var success = true;
+  var resultMsg = "Syntax check: ";
+  fullSet.forEach( function(item) {
+    var hasIt = Object.keys(params).includes(item)
+    if( hasIt ) { 
+      resultMsg += item + ", ";
+    }else{
+      resultMsg += item + "(missing), ";
+      success = false;
+    }
+  });
+  return success;
+}
+module.exports.checkSyntax = checkSyntax;
+
+function assembleArgs(action, params, opts){
+  if(!checkSyntax(action, params)){
+    console.log(`Invalid params: ${params}`);
+    return false;
+  }
+  credential = `-AuthType DBmaestroAccount -UserName ${params.username} -Password \"${params.token}\"`;
+  args = [ 
+    `-${action}`,
+    `-ProjectID ${opts.projectId}`,
+    `-Server ${config.general.server}`
+  ]
+  // Get specific command syntax
+  switch (action) {
+    case "Upgrade":
+      args.push(`-EnvName ${params.env_name}`);
+      args.push(`-PackageID ${opts.packageId}`);
+      break;
+    case "Package":
+      break;
+  }
+  return args;
+}
