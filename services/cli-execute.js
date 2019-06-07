@@ -14,12 +14,12 @@ async function abort() {
 }
 module.exports.abort = abort;
 
-function cliExecute(cmd, args = [], opts = {}) {
+function cliExecute(args = [], opts = {}) {
 	return new Promise(async (resolve, reject) => {
     var spawn=require('child_process').spawn
     , child=null;
-	console.log("CLI: ",cmd,", ",args)
-    child = spawn(cmd, args); // function(){console.log('end');}, {timeout:6000});
+	console.log("CLI: ",cmd,", ",args);
+    var child = spawn(process.env.comspec, args); // function(){console.log('end');}, {timeout:6000});
     /*console.log('Timeout');
     setTimeout(function(){
         console.log('killing proc (timeout)');

@@ -45,8 +45,10 @@ function dbmApi(action, params, opts = {}){
   console.log(`Starting DBm API command - ${action}`);
   console.log(`Params: ${params}`);  
   args = assembleArgs(action, params, opts);
-  cmd = cliConfig["general"]["java_cmd"];
-  cli.cliExecute(cmd, args);
+  //cmd = cliConfig["general"]["java_cmd"];
+  //cmd = "dir";
+  //args = ['/c', 'dir', "C:\\Automation"];
+  cli.cliExecute(args);
 }
 
 module.exports.dbmApi = dbmApi;
@@ -76,8 +78,14 @@ function assembleArgs(action, params, opts){
     console.log(`Invalid params: ${params}`);
     //return false;
   }
+  cmd = cliConfig["general"]["java_cmd"];
+  jar_path = cliConfig["general"]["jar_path"];
   credential = `-AuthType DBmaestroAccount -UserName ${params.username} -Password \"${params.token}\"`;
-  args = [ 
+  args = [
+	'/c',
+	'java',
+	'-jar',
+	`${jar_path}`,
     `-${action}`,
     `-ProjectID ${opts.projectId}`,
     `-Server ${cliConfig.general.server}`
