@@ -5,18 +5,20 @@ async function get(req, res, next) {
 		const context = {};
 				
 		if (req.params.id) {
-  		context.id = parseInt(req.params.id, 10);
-  		const rows = await projects.find(context);
-			if ( rows.length === 1) {
+ 			context.id = parseInt(req.params.id, 10);
+			const rows = await projects.find(context);		
+ 			if ( rows.length === 1) {
 				res.status(200).json(rows[0]);
 			} else {
 				res.status(404).end();
 			}
-    } else if(req.query.name){
-  		context.name = req.query.name;
-  		const rows = await projects.find_by_name(context);
+		} else if(req.query.name){
+			context.name = req.query.name;
+			const rows = await projects.find_by_name(context);
       
 		} else {
+			context.id = parseInt(req.params.id, 10);
+			const rows = await projects.find(context);		
 			res.status(200).json(rows);
 		}
 	} catch(err) {
