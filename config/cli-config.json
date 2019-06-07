@@ -3,9 +3,9 @@
     "general" : {
       "java_cmd" : "java -jar \"C:\\Program Files (x86)\\DBmaestro\\TeamWork\\TeamWorkOracleServer\\Automation\\DBmaestroAgent.jar\"",
       "staging_path" : "C:\\pipelinescript\\MP",
-      "server" : "dbmtemplate",
-  	  "username" : "dbmguest@dbmaestro.com",
-  	  "token" : "2BqDtNyL7gQjp6J0Kp7HNHbB5P0WayH0"
+      "server" : "dbmJohnHancock:8017",
+  	  "username" : "automation@dbmaestro.com",
+  	  "token" : "8Nfdszu5MJfzYOPJGp3cABczsmEPlxLK"
     },
     "connections" : {
       "repository" : {
@@ -15,7 +15,7 @@
       }
     },
     "commands" : {
-      "base" : ["server", "auth_type", "username", "token"],
+      "base" : ["server", "username", "token"],
       "optional" : ["use_ssl"],
       "validate" : ["project_id", "environment", "package_id"],
       "upgrade" : ["project_id", "environment", "package_id"],
