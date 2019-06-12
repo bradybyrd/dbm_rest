@@ -1,5 +1,5 @@
 // CLI exexute - takes a command line and executes it
-const config = require('../config/cli-config.js');
+const config = require('../config/cli-config.json');
 const child = null;
 
 async function initialize() {
@@ -14,12 +14,12 @@ async function abort() {
 }
 module.exports.abort = abort;
 
-function cliExecute(cmd, args = [], opts = {}) {
+function cliExecute(args = [], opts = {}) {
 	return new Promise(async (resolve, reject) => {
     var spawn=require('child_process').spawn
     , child=null;
-
-    child = spawn(cmd, args); // function(){console.log('end');}, {timeout:6000});
+	console.log("CLI: ",cmd,", ",args);
+    var child = spawn(process.env.comspec, args); // function(){console.log('end');}, {timeout:6000});
     /*console.log('Timeout');
     setTimeout(function(){
         console.log('killing proc (timeout)');

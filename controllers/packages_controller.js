@@ -1,5 +1,5 @@
 const packages = require('../models/packages.js');
-const dbmApi = require('dbm-actions.js');
+const dbmApi = require('./dbm-actions.js');
 
 async function get(req, res, next) {
 	// api/projects/:id/packages
@@ -72,7 +72,7 @@ async function deploy(req, res, next) {
 		const rows = await packages.find(context);
 		if (req.params.id) {
 			if ( rows.length === 1) {
-        dbmActions.dbmApi("upgrade", req.params, {"projectId" : context.project_id, "packageId" : context.id})
+        dbmApi.dbmApi("upgrade", req.body, {"projectId" : context.project_id, "packageId" : context.id})
 				res.status(200).json(rows[0]);
 			} else {
 				res.status(404).end();

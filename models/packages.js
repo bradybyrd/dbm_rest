@@ -13,7 +13,7 @@ const baseQuery =
   type_id,
   was_deployed,
   test_results,
-  target_type_id,
+  target_type_id
   from TBL_SMG_VERSION`;
  
 async function find(context) {
@@ -31,15 +31,19 @@ async function finder(ftype, context) {
   let query = baseQuery;
   const binds = {};
   if (ftype === "by_name") {
-    binds.name = context.name
-    binds.pipeline_id = context.pipeline_id
-    query += `\nwhere pipeline_id = :pipeline_id and name = ':name'`;
+    console.log("Packages by pipeline name")
+    binds.name = context.name;
+    binds.pipeline_id = context.project_id;
+	query += `\nwhere pipeline_id = :pipeline_id and name = ':name'`;
   }else if (ftype === "by_project"){
-    binds.pipeline_id = context.pipeline_id    
-    query += `\nwhere  pipeline_id = :pipeline_id`;
+	console.log("Packages by pipeline_id")
+    binds.pipeline_id = context.project_id;
+	//binds.id = 18;
+    query += `\nwhere pipeline_id = :pipeline_id`;
   }else if (ftype === "by_id"){
-    binds.id = context.id    
-    binds.pipeline_id = context.pipeline_id    
+    console.log("Packages by pipeline_id and package_id")
+    binds.id = context.id;  
+    binds.pipeline_id = context.project_id;
     query += `\nwhere  pipeline_id = :pipeline_id AND id = :id`;
   }
   const result = await database.simpleExecute(query, binds); 

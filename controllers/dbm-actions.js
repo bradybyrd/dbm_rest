@@ -45,16 +45,18 @@ function dbmApi(action, params, opts = {}){
   console.log(`Starting DBm API command - ${action}`);
   console.log(`Params: ${params}`);  
   args = assembleArgs(action, params, opts);
-  cmd = cliConfig["general"]["java_cmd"];
-  cli.cliExecute(cmd, args);
+  //cmd = cliConfig["general"]["java_cmd"];
+  //cmd = "dir";
+  //args = ['/c', 'dir', "C:\\Automation"];
+  cli.cliExecute(args);
 }
 
 module.exports.dbmApi = dbmApi;
 
 function checkSyntax (action, params, opts = {}) {
-  cmdSyntax = config["commands"]
+  cmdSyntax = cliConfig["commands"]
   var fullSet = [];
-  fullSet = cmdSyntax["base"].concat(cmdSyntax[action]);
+  fullSet = cmdSyntax["base"].concat(cmdSyntax[action]).concat(opts);
   var success = true;
   var resultMsg = "Syntax check: ";
   fullSet.forEach( function(item) {
@@ -66,6 +68,7 @@ function checkSyntax (action, params, opts = {}) {
       success = false;
     }
   });
+  console.log("Params Validation: ",resultMsg);
   return success;
 }
 module.exports.checkSyntax = checkSyntax;
@@ -73,22 +76,29 @@ module.exports.checkSyntax = checkSyntax;
 function assembleArgs(action, params, opts){
   if(!checkSyntax(action, params)){
     console.log(`Invalid params: ${params}`);
-    return false;
+    //return false;
   }
+  cmd = cliConfig["general"]["java_cmd"];
+  jar_path = cliConfig["general"]["jar_path"];
   credential = `-AuthType DBmaestroAccount -UserName ${params.username} -Password \"${params.token}\"`;
-  args = [ 
+  args = [
+	'/c',
+	'java',
+	'-jar',
+	`${jar_path}`,
     `-${action}`,
     `-ProjectID ${opts.projectId}`,
-    `-Server ${config.general.server}`
+    `-Server ${cliConfig.general.server}`
   ]
   // Get specific command syntax
-  switch (action) {
-    case "Upgrade":
-      args.push(`-EnvName ${params.env_name}`);
+  switch (action.toLowerCase()) {
+    case "upgrade":
+      args.push(`-EnvName ${params.environment}`);
       args.push(`-PackageID ${opts.packageId}`);
       break;
-    case "Package":
+    case "package":
       break;
   }
+  args.push(credential);
   return args;
 }
