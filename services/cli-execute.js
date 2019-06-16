@@ -14,11 +14,11 @@ async function abort() {
 }
 module.exports.abort = abort;
 
-function cliExecute(args = [], opts = {}) {
+function cliExecuteOld(args = [], opts = {}) {
+  const exitCode = 0;
 	return new Promise(async (resolve, reject) => {
-    var spawn=require('child_process').spawn
-    , child=null;
-	console.log("CLI: ",cmd,", ",args);
+    var spawn=require('child_process').spawn, child=null;
+	  console.log("CLI: ",cmd,", ",args);
     var child = spawn(process.env.comspec, args); // function(){console.log('end');}, {timeout:6000});
     /*console.log('Timeout');
     setTimeout(function(){
@@ -38,7 +38,7 @@ function cliExecute(args = [], opts = {}) {
     child.stdin.on('data', function(data){
         console.log('stdin:'+data);
     });
-    
+
     child.on('exit', function (code, signal) {
       console.log('child process exited with ' +
                   `code ${code} and signal ${signal}`);
@@ -48,6 +48,53 @@ function cliExecute(args = [], opts = {}) {
       resolve();
     });
   });
+}
+
+function cliExecute(args = [], opts = {}) {
+  const exitCode = 0;
+	const cliResult = new Promise(function (resolve, reject) {
+    var spawn=require('child_process').spawn, child=null;
+	  console.log("CLI: ",cmd,", ",args);
+    var child = spawn(process.env.comspec, args); // function(){console.log('end');}, {timeout:6000});
+    /*console.log('Timeout');
+    setTimeout(function(){
+        console.log('killing proc (timeout)');
+        child.stdin.pause();
+        child.kill();
+    }, 12000);
+    */
+    child.stdout.on('data', function(data){
+        console.log('stdout:'+data);
+    });
+
+    child.stderr.on('data', function(data){
+        console.log('stderr:'+data);
+    });
+
+    child.stdin.on('data', function(data){
+        console.log('stdin:'+data);
+    });
+
+    child.on('exit', function (code, signal) {
+      console.log('child process exited with ' +
+                  `code ${code} and signal ${signal}`);
+      exitCode = code;
+      if( code > 0 ) {
+        console.log("Running into problems...");
+      }else{
+        console.log("Looks pretty good from here");
+      }
+    });
+  }); // end Promise
+
+ (async function(){
+   try {
+     await cliResult;
+   }catch(err){
+     console.log(err);
+   }
+ });
+
 }
 
 module.exports.cliExecute = cliExecute;
