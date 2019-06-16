@@ -1,6 +1,7 @@
 {
   "### Instructions ###": "Enter the local settings items for your installation",
     "general" : {
+      "platform" : "windows",
       "java_cmd" : "java -jar",
 	  "jar_path" : "C:\\Progra~2\\DBmaestro\\TeamWork\\TeamWorkOracleServer\\Automation\\DBmaestroAgent.jar",
       "staging_path" : "C:\\pipelinescript\\MP",
