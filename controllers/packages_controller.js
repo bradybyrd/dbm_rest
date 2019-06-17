@@ -8,14 +8,14 @@ async function get(req, res, next) {
 		context.project_id = parseInt(req.params.project_id, 10);
 		if (req.params.id) {
 			context.id = parseInt(req.params.id, 10);
-			const rows = await packages.finder("by_id", context);		
+			const rows = await packages.finder("by_id", context);
 			if ( rows.length === 1) {
 				res.status(200).json(rows[0]);
 			} else {
 				res.status(404).end();
 			}
 		} else {
-			const rows = await packages.finder("by_project", context);		
+			const rows = await packages.finder("by_project", context);
 			res.status(200).json(rows);
 		}
 	} catch(err) {
@@ -72,6 +72,7 @@ async function deploy(req, res, next) {
 		const rows = await packages.find(context);
 		if (req.params.id) {
 			if ( rows.length === 1) {
+				//console.log("FullParams: ", req.body.environment, req.body.token, req.body.username, req.params.project_id, req.params.id)
         dbmApi.dbmApi("upgrade", req.body, {"projectId" : context.project_id, "packageId" : context.id})
 				res.status(200).json(rows[0]);
 			} else {

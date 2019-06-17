@@ -21,10 +21,10 @@ async function post(req, res, next) {
 		context.authType = req.params.auth_type;
 		context.userName = req.params.username;
 		context.token = req.params.token;
-    
+
 		context.id = parseInt(req.params.id, 10);
 		const rows = await employees.find(context);
-		
+
 		if (req.params.id) {
 			if ( rows.length === 1) {
 				res.status(200).json(rows[0]);
@@ -43,7 +43,7 @@ module.exports.post = post;
 
 function dbmApi(action, params, opts = {}){
   console.log(`Starting DBm API command - ${action}`);
-  console.log(`Params: ${params}`);  
+  console.log(`Params: ${params}`);
   args = assembleArgs(action, params, opts);
   //cmd = cliConfig["general"]["java_cmd"];
   //cmd = "dir";
@@ -56,49 +56,68 @@ module.exports.dbmApi = dbmApi;
 function checkSyntax (action, params, opts = {}) {
   cmdSyntax = cliConfig["commands"]
   var fullSet = [];
-  fullSet = cmdSyntax["base"].concat(cmdSyntax[action]).concat(opts);
+  fullSet = cmdSyntax[action]; //.concat(opts);
+  params["action"] = action;
+  Object.keys(opts).forEach( function(item){
+    params[item] = opts[item];
+  });
   var success = true;
   var resultMsg = "Syntax check: ";
   fullSet.forEach( function(item) {
     var hasIt = Object.keys(params).includes(item)
-    if( hasIt ) { 
+    if( hasIt ) {
       resultMsg += item + ", ";
     }else{
       resultMsg += item + "(missing), ";
       success = false;
     }
   });
-  console.log("Params Validation: ",resultMsg);
+  //console.log("ValidationInput: ", fullSet);
+  //console.log("Params Validation: ",resultMsg);
   return success;
 }
 module.exports.checkSyntax = checkSyntax;
 
 function assembleArgs(action, params, opts){
-  if(!checkSyntax(action, params)){
+  if(!checkSyntax(action, params, opts)){
     console.log(`Invalid params: ${params}`);
     //return false;
   }
-  cmd = cliConfig["general"]["java_cmd"];
-  jar_path = cliConfig["general"]["jar_path"];
-  credential = `-AuthType DBmaestroAccount -UserName ${params.username} -Password \"${params.token}\"`;
   args = [
 	'/c',
 	'java',
 	'-jar',
-	`${jar_path}`,
+	cliConfig["general"]["jar_path"],
     `-${action}`,
-    `-ProjectID ${opts.projectId}`,
-    `-Server ${cliConfig.general.server}`
+    "-ProjectId",
+    opts.projectId
   ]
   // Get specific command syntax
   switch (action.toLowerCase()) {
     case "upgrade":
-      args.push(`-EnvName ${params.environment}`);
-      args.push(`-PackageID ${opts.packageId}`);
+      args.push("-EnvName");
+      args.push(params.environment);
+      args.push("-PackageID");
+      args.push(opts.packageId);
       break;
     case "package":
       break;
   }
-  args.push(credential);
+  args.push("-Server");
+  args.push(cliConfig.general.server)
+  args.push("-AuthType");
+  args.push("DBmaestroAccount");
+  args.push("-Username");
+  if(params.username){
+    args.push(params.username);
+  }else{
+    args.push(cliConfig.general.username);
+  }
+  args.push("-Password");
+  if(params.username){
+    args.push(`"${params.token}"`);
+  }else{
+    args.push(`"${cliConfig.general.token}"`);
+  }
   return args;
 }

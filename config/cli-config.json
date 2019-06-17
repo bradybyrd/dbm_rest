@@ -5,7 +5,7 @@
       "java_cmd" : "java -jar",
 	  "jar_path" : "C:\\Progra~2\\DBmaestro\\TeamWork\\TeamWorkOracleServer\\Automation\\DBmaestroAgent.jar",
       "staging_path" : "C:\\pipelinescript\\MP",
-      "server" : "dbmJohnHancock:8017",
+      "server" : "teamwork2012:8017",
   	  "username" : "automation@dbmaestro.com",
   	  "token" : "8Nfdszu5MJfzYOPJGp3cABczsmEPlxLK"
     },
@@ -23,7 +23,7 @@
       "upgrade" : ["project_id", "environment", "package_id"],
       "package" : ["project_id"],
       "refresh" : ["project_id", "dev_environment"]
-      
+
     }
 
 }

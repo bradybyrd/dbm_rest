@@ -14,47 +14,11 @@ async function abort() {
 }
 module.exports.abort = abort;
 
-function cliExecuteOld(args = [], opts = {}) {
-  const exitCode = 0;
-	return new Promise(async (resolve, reject) => {
-    var spawn=require('child_process').spawn, child=null;
-	  console.log("CLI: ",cmd,", ",args);
-    var child = spawn(process.env.comspec, args); // function(){console.log('end');}, {timeout:6000});
-    /*console.log('Timeout');
-    setTimeout(function(){
-        console.log('killing proc (timeout)');
-        child.stdin.pause();
-        child.kill();
-    }, 12000);
-    */
-    child.stdout.on('data', function(data){
-        console.log('stdout:'+data);
-    });
-
-    child.stderr.on('data', function(data){
-        console.log('stderr:'+data);
-    });
-
-    child.stdin.on('data', function(data){
-        console.log('stdin:'+data);
-    });
-
-    child.on('exit', function (code, signal) {
-      console.log('child process exited with ' +
-                  `code ${code} and signal ${signal}`);
-      if( code > 0 ) {
-        reject();
-      }
-      resolve();
-    });
-  });
-}
-
 function cliExecute(args = [], opts = {}) {
-  const exitCode = 0;
+  var exitCode = 0;
 	const cliResult = new Promise(function (resolve, reject) {
     var spawn=require('child_process').spawn, child=null;
-	  console.log("CLI: ",cmd,", ",args);
+	  console.log("CLI: ",args, opts);
     var child = spawn(process.env.comspec, args); // function(){console.log('end');}, {timeout:6000});
     /*console.log('Timeout');
     setTimeout(function(){
@@ -82,7 +46,7 @@ function cliExecute(args = [], opts = {}) {
       if( code > 0 ) {
         console.log("Running into problems...");
       }else{
-        console.log("Looks pretty good from here");
+        console.log("Success");
       }
     });
   }); // end Promise
