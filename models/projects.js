@@ -1,4 +1,6 @@
 const database = require('../services/database.js');
+const environments = require('./environments.js');
+const packages = require('./packages.js');
 
 const baseQuery =
  `select proj.flowid "id",
@@ -30,5 +32,31 @@ async function find_by_name(context) {
   return result.rows[0];
 }
 
+async function projectInfo(context) {
+		var binds = {};
+    var envs = null;
+		var answer = {"id" : context.id, "status" : "ERROR"};
+		binds.id = context.id;
+		const rows = await find(context);
+		try{
+			if ( rows.length === 1) {
+				//console.log(`found records ${util.inspect(rows, {showHidden: false, depth: null}) }`);
+        answer.name = rows[0].name;
+        answer.staging_path = rows[0].staging_path;
+        answer.is_version = rows[0].is_version;
+        binds.project_id = context.id;
+        envs = await environments.finder("by_project", binds)
+        answer["environments"] = envs;
+        answer["status"] = "SUCCESS";
+				return(answer);
+			} else {
+				return(answer);
+			}
+		}catch(err){
+			console.log(err)
+		}
+}
+
+module.exports.projectInfo = projectInfo;
 module.exports.find_by_name = find_by_name;
 module.exports.find = find;

@@ -119,8 +119,10 @@ function upload(req, res, next) {
 					];
 					restResult["upload_file"] = file.originalname
 					console.log(`Copy params: ${args}`);
-					var copyOut = cli.cliExecute(args);
+					copyOut = cli.cliExecute(args);
 					restResult["cliExecute"] = copyOut;
+
+
 			    },
 					function(err){
 			      if(err){
@@ -131,6 +133,7 @@ function upload(req, res, next) {
 			     }
 			  }); //filesArray
 				console.log("Start Packaging Here")
+				dbmApi.dbmApi("package", {}, {"projectId" : context.project_id})
 				res.status(200).json(restResult);
 		 });
 	} catch(err) {
@@ -155,40 +158,6 @@ async function project(id) {
 			console.log(err)
 		}
 }
-
-					/*		return new Promise(function(resolve, reject){
-			try{
-				const rows = projects.find(context);
-
-				if ( rows.length === 1) {
-					console.log(`found records ${util.inspect(rows, {showHidden: false, depth: null}) }`);
-					resolve(rows[0]);
-				} else {
-					reject({"status" : "ERROR"});
-				}
-
-			resolve(rows);
-
-			}catch(err){
-				console.log(err);
-			}
-
-		});
-	}
-	/*
-		console.log(`#=> await over`)
-		rows.then(function(result){
-			if ( result.length === 1) {
-				console.log(`found records ${util.inspect(result, {showHidden: false, depth: null}) }`);
-				return result[0];
-			} else {
-				return {"status" : "ERROR"};
-			}
-		});
-	console.log(`Answer ${util.inspect(answer, {showHidden: false, depth: null}) }`);
-	return answer;
-}
-*/
 
 module.exports.upload = upload;
 module.exports.deploy = deploy;

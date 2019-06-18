@@ -59,9 +59,11 @@ function cliExecute(args = [], opts = {}) {
 
  (async function(){
    try {
-     await cliResult;
+     returnRes = await cliResult;
+     return returnRes;
    }catch(err){
      console.log(err);
+     return err;
    }
  });
 
