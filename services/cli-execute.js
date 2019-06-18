@@ -16,6 +16,7 @@ module.exports.abort = abort;
 
 function cliExecute(args = [], opts = {}) {
   var exitCode = 0;
+  var restResult = {"action" : "cliExecute", "command" : args.join(" ")};
 	const cliResult = new Promise(function (resolve, reject) {
     var spawn=require('child_process').spawn, child=null;
 	  console.log("CLI: ",args, opts);
@@ -29,10 +30,12 @@ function cliExecute(args = [], opts = {}) {
     */
     child.stdout.on('data', function(data){
         console.log('stdout:'+data);
+        restResult["stdout"] = data;
     });
 
     child.stderr.on('data', function(data){
         console.log('stderr:'+data);
+        restResult["stderr"] = data;
     });
 
     child.stdin.on('data', function(data){
@@ -42,11 +45,14 @@ function cliExecute(args = [], opts = {}) {
     child.on('exit', function (code, signal) {
       console.log('child process exited with ' +
                   `code ${code} and signal ${signal}`);
+      restResult["exit_code"] = code;
       exitCode = code;
       if( code > 0 ) {
         console.log("Running into problems...");
+        reject(restResult);
       }else{
         console.log("Success");
+        resolve(restResult);
       }
     });
   }); // end Promise

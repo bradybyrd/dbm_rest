@@ -1,5 +1,14 @@
+const webServerConfig = require('../config/web-server.js');
+const cliConfig = require('../config/cli-config.json');
 const packages = require('../models/packages.js');
+const projects = require('../models/projects.js');
 const dbmApi = require('./dbm-actions.js');
+var fs = require("fs");
+var path = require('path');
+var async = require('async');
+var cmd = require('node-cmd');
+var util = require('util');
+const cli = require('../services/cli-execute.js');
 
 async function get(req, res, next) {
 	// api/projects/:id/packages
@@ -86,6 +95,102 @@ async function deploy(req, res, next) {
 	}
 }
 
+function upload(req, res, next) {
+  //  POST: projects/:project_id/packages/upload (multipart){env_name: DEV, username: brady, token: blahfkgj4386jh4}
+	try {
+		const context = {};
+		const restResult = {"action" : "PackageUpload"};
+		context.project_id = parseInt(req.params.project_id, 10);
+		var filesArray = req.files;
+		context.id = context.project_id;
+		restResult["project_id"] = context.project_id
+		project(context.project_id)
+			.then(function(proj){
+				console.log(`Project: ${util.inspect(proj, {showHidden: false, depth: null}) }`);
+				restResult["project_name"] = proj.name
+				async.each(filesArray,function(file,eachcallback){
+			     //carry out your file operations here and pass callback at the end
+			     console.log(`Processing File: ${util.inspect(file, {showHidden: false, depth: null}) }`);
+					 var args = [
+				 	'/c',
+				 	'copy',
+				 	`${webServerConfig.upload_dir}\\${file.filename}`,
+				 	`${proj.staging_path}\\${file.originalname}`
+					];
+					restResult["upload_file"] = file.originalname
+					console.log(`Copy params: ${args}`);
+					var copyOut = cli.cliExecute(args);
+					restResult["cliExecute"] = copyOut;
+			    },
+					function(err){
+			      if(err){
+			          console.log("error ocurred in each",err);
+			      }else{
+			        console.log(`finished processing file: ${file.originalname}`);
+
+			     }
+			  }); //filesArray
+				console.log("Start Packaging Here")
+				res.status(200).json(restResult);
+		 });
+	} catch(err) {
+		res.status(404).json(err);
+		next(err);
+	}
+}
+
+async function project(id) {
+		const context = {};
+		var answer = null;
+		context.id = id;
+		const rows = await projects.find(context);
+		try{
+			if ( rows.length === 1) {
+				//console.log(`found records ${util.inspect(rows, {showHidden: false, depth: null}) }`);
+				return(rows[0]);
+			} else {
+				return({"status" : "ERROR"});
+			}
+		}catch(err){
+			console.log(err)
+		}
+}
+
+					/*		return new Promise(function(resolve, reject){
+			try{
+				const rows = projects.find(context);
+
+				if ( rows.length === 1) {
+					console.log(`found records ${util.inspect(rows, {showHidden: false, depth: null}) }`);
+					resolve(rows[0]);
+				} else {
+					reject({"status" : "ERROR"});
+				}
+
+			resolve(rows);
+
+			}catch(err){
+				console.log(err);
+			}
+
+		});
+	}
+	/*
+		console.log(`#=> await over`)
+		rows.then(function(result){
+			if ( result.length === 1) {
+				console.log(`found records ${util.inspect(result, {showHidden: false, depth: null}) }`);
+				return result[0];
+			} else {
+				return {"status" : "ERROR"};
+			}
+		});
+	console.log(`Answer ${util.inspect(answer, {showHidden: false, depth: null}) }`);
+	return answer;
+}
+*/
+
+module.exports.upload = upload;
 module.exports.deploy = deploy;
 module.exports.get = get;
 module.exports.put = put;

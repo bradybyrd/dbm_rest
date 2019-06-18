@@ -48,3 +48,15 @@ oracledb **   See https://oracle.github.io/node-oracledb/INSTALL.html for detail
 oracledb **
 oracledb ** Installation instructions: https://oracle.github.io/node-oracledb/INSTALL.html
 oracledb ********************************************************************************
+
+#=> Adding File Upload Capability
+npm install --save multer async node-cmd
+C:\Automation\dev\dbm_rest>npm install --save multer async node-cmd
+npm WARN dbm_rest@1.0.0 No repository field.
+
++ async@3.0.1
++ multer@1.4.1
++ node-cmd@3.0.0
+added 23 packages in 4.176s
+
+https://medium.com/technoetics/handling-file-upload-in-nodejs-7a4bb9f09a27

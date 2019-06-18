@@ -1,6 +1,6 @@
 const oracledb = require('oracledb');
 const dbConfig = require('../config/database.js');
- 
+const util = require('util');
 async function initialize() {
   const pool = await oracledb.createPool(dbConfig.hrPool);
 }
@@ -12,13 +12,13 @@ async function close() {
 module.exports.close = close;
 
 function simpleExecute(statement, binds = [], opts = {}) {
-	console.log(`Query: ${statement}`)
+	console.log(`Query: ${statement}, bind: ${util.inspect(binds, {showHidden: false, depth: null}) }`)
 	return new Promise(async (resolve, reject) => {
 		let conn;
-		
+
 		opts.outFormat = oracledb.OBJECT;
 		opts.autoCommit = true;
-		
+
 		try {
 			conn = await oracledb.getConnection();
 			const result = await conn.execute(statement, binds, opts);
