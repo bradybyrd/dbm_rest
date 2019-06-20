@@ -1,5 +1,7 @@
 const cliConfig = require('../config/cli-config.json');
 const cli = require('../services/cli-execute.js');
+const util = require('util');
+
 const cliParams = {
   "action" : "validate",
   "project" : "hrm",
@@ -39,19 +41,18 @@ async function post(req, res, next) {
 	}
 }
 
-module.exports.post = post;
-
-function dbmApi(action, params, opts = {}){
+async function dbmApi(action, params, opts = {}){
   console.log(`Starting DBm API command - ${action}`);
-  console.log(`Params: ${params}`);
-  args = assembleArgs(action, params, opts);
-  //cmd = cliConfig["general"]["java_cmd"];
-  //cmd = "dir";
-  //args = ['/c', 'dir', "C:\\Automation"];
-  cli.cliExecute(args);
+  console.log(`Params: ${util.inspect(params, {showHidden: false, depth: null}) }`, opts);
+  var result = {"status" : "ERROR"};
+  args = await assembleArgs(action, params, opts);
+  result = await cli.cliExecute(args);
+  console.log(`#=> DBMApi-Result: `, result.stdout);
+  if(result.stderr){
+    console.log(`stderr: ${result.stderr}`);
+  }
+  return(result);
 }
-
-module.exports.dbmApi = dbmApi;
 
 function checkSyntax (action, params, opts = {}) {
   cmdSyntax = cliConfig["commands"]
@@ -76,15 +77,14 @@ function checkSyntax (action, params, opts = {}) {
   //console.log("Params Validation: ",resultMsg);
   return success;
 }
-module.exports.checkSyntax = checkSyntax;
 
 function assembleArgs(action, params, opts){
   if(!checkSyntax(action, params, opts)){
-    console.log(`Invalid params: ${params}`);
+    console.log(`Invalid params: ${util.inspect(params, {showHidden: false, depth: null}) }`);
     //return false;
   }
   args = [
-	'/c',
+	// '/c',
 	'java',
 	'-jar',
 	cliConfig["general"]["jar_path"],
@@ -114,10 +114,17 @@ function assembleArgs(action, params, opts){
     args.push(cliConfig.general.username);
   }
   args.push("-Password");
-  if(params.username){
+  if(params.token){
     args.push(`"${params.token}"`);
   }else{
     args.push(`"${cliConfig.general.token}"`);
   }
+  // TESTING
+  args = ["dir","/w","C:\\Automation\\BADMP"]
   return args;
 }
+
+
+module.exports.post = post;
+module.exports.dbmApi = dbmApi;
+module.exports.checkSyntax = checkSyntax;

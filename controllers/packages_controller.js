@@ -104,26 +104,36 @@ function upload(req, res, next) {
 		var filesArray = req.files;
 		context.id = context.project_id;
 		restResult["project_id"] = context.project_id
-		project(context.project_id)
-			.then(function(proj){
+		var proj = {};
+		projectInfo(context.project_id).then(function(proj){
 				console.log(`Project: ${util.inspect(proj, {showHidden: false, depth: null}) }`);
+				var rs = {};
+				rs = projects.releaseSource("cache", proj) ; //.then(function(result){
+				//	rs = result;
+				//});
+
 				restResult["project_name"] = proj.name
-				async.each(filesArray,function(file,eachcallback){
+				//async.each(filesArray,function(file,eachcallback){
+				var file = filesArray[0];
 			     //carry out your file operations here and pass callback at the end
 			     console.log(`Processing File: ${util.inspect(file, {showHidden: false, depth: null}) }`);
 					 var args = [
-				 	'/c',
 				 	'copy',
 				 	`${webServerConfig.upload_dir}\\${file.filename}`,
-				 	`${proj.staging_path}\\${file.originalname}`
+				 	`${proj.staging_path}\\${rs.schema}\\${file.originalname}`
 					];
 					restResult["upload_file"] = file.originalname
 					console.log(`Copy params: ${args}`);
-					copyOut = cli.cliExecute(args);
-					restResult["cliExecute"] = copyOut;
-
-
-			    },
+					cli.cliExecute(args)
+					.then(function(result){
+							console.log(`Result: `, result.stdout);
+							if(result.stderr){
+								console.log(`stderr: ${result.stderr}`);
+							}
+							restResult["cliExecute"] = result;
+					});
+			   /*
+			  },
 					function(err){
 			      if(err){
 			          console.log("error ocurred in each",err);
@@ -131,26 +141,40 @@ function upload(req, res, next) {
 			        console.log(`finished processing file: ${file.originalname}`);
 
 			     }
-			  }); //filesArray
+					 */
+			  //}); //filesArray
 				console.log("Start Packaging Here")
-				dbmApi.dbmApi("package", {}, {"projectId" : context.project_id})
-				res.status(200).json(restResult);
-		 });
+					dbmApi.dbmApi("package", {}, {"projectId" : context.project_id}).then(function(result){
+						try{
+							console.log(`#=> PkgController-Result: ${util.inspect(result, {showHidden: false, depth: null}) }`);
+							restResult.command = result.command;
+							restResult.stdout = result.stdout;
+							if(result.stderr){
+								restResult.stderr = result.stderr;
+							}
+							res.status(200).json(restResult);
+						} catch(err){
+							console.log("error ocurred in API-Package",err);
+							res.status(404).json(err);
+
+						}
+
+					});
+			});
 	} catch(err) {
 		res.status(404).json(err);
 		next(err);
 	}
 }
 
-async function project(id) {
+async function projectInfo(id) {
 		const context = {};
 		var answer = null;
 		context.id = id;
-		const rows = await projects.find(context);
+		const rows = await projects.projectInfo(context);
 		try{
-			if ( rows.length === 1) {
-				//console.log(`found records ${util.inspect(rows, {showHidden: false, depth: null}) }`);
-				return(rows[0]);
+			if ( rows.status === "SUCCESS") {
+				return(rows);
 			} else {
 				return({"status" : "ERROR"});
 			}

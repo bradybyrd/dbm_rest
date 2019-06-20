@@ -1,6 +1,7 @@
 const database = require('../services/database.js');
 const environments = require('./environments.js');
 const packages = require('./packages.js');
+const util = require('util');
 
 const baseQuery =
  `select proj.flowid "id",
@@ -57,6 +58,29 @@ async function projectInfo(context) {
 		}
 }
 
+function releaseSource(opt, cacheInfo = {}) {
+  var answer = {"status" : "ERROR"};
+  console.log(`releaseSource-start: ${util.inspect(cacheInfo, {showHidden: false, depth: null}) }`);
+  var context = {};
+  if(opt !== "cache"){
+    context.id = cacheInfo.id;
+    projectInfo(context).then(function(result){
+      cacheInfo = result
+    });
+  }
+  for (env in cacheInfo.environments) {
+    if(cacheInfo.environments[env].environment_type === "Release Source") {
+      answer = cacheInfo.environments[env];
+      answer.status = "SUCCESS";
+    }
+    //console.log(`releaseSource-inner: ${util.inspect(answer, {showHidden: false, depth: null}) }`);
+
+  }
+  console.log(`releaseSource: ${util.inspect(answer, {showHidden: false, depth: null}) }`);
+  return answer;
+}
+
 module.exports.projectInfo = projectInfo;
+module.exports.releaseSource = releaseSource;
 module.exports.find_by_name = find_by_name;
 module.exports.find = find;
