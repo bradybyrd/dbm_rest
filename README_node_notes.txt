@@ -60,3 +60,22 @@ npm WARN dbm_rest@1.0.0 No repository field.
 added 23 packages in 4.176s
 
 https://medium.com/technoetics/handling-file-upload-in-nodejs-7a4bb9f09a27
+
+Installing TEsting harness
+C:\Automation\dev\dbm_rest>npm install --save mocha
+npm WARN dbm_rest@1.0.0 No repository field.
+
++ mocha@6.1.4
+added 112 packages in 12.671s
+
+C:\Automation\dev\dbm_rest>npm install --save-dev should
+npm WARN dbm_rest@1.0.0 No repository field.
+
++ should@13.2.3
+added 6 packages in 2.245s
+
+C:\Automation\dev\dbm_rest>npm install --save-dev supertest
+npm WARN dbm_rest@1.0.0 No repository field.
+
++ supertest@4.0.2
+added 15 packages in 3.313s
