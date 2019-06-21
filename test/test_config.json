@@ -1,0 +1,10 @@
+{
+  "server_url" : "http://localhost:3001",
+  "scenario_1" : {
+    "project_id" : 1,
+    "package_id" : 11,
+    "environment_name" : "DEV_RS",
+    "environment_id" : 4,
+    "package_path" : "C:\\Automation\\dbm_demo\\devops\\packaging\\V0.0.7__TestPkg.zip"
+  }
+}
