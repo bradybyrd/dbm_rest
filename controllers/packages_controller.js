@@ -113,36 +113,26 @@ function upload(req, res, next) {
 				//});
 
 				restResult["project_name"] = proj.name
-				//async.each(filesArray,function(file,eachcallback){
+				//Take only the first file uploaded
 				var file = filesArray[0];
-			     //carry out your file operations here and pass callback at the end
-			     console.log(`Processing File: ${util.inspect(file, {showHidden: false, depth: null}) }`);
-					 var args = [
-				 	'copy',
-				 	`${webServerConfig.upload_dir}\\${file.filename}`,
-				 	`${proj.staging_path}\\${rs.schema}\\${file.originalname}`
-					];
-					restResult["upload_file"] = file.originalname
-					console.log(`Copy params: ${args}`);
-					cli.cliExecute(args)
-					.then(function(result){
-							console.log(`Result: `, result.stdout);
-							if(result.stderr){
-								console.log(`stderr: ${result.stderr}`);
-							}
-							restResult["cliExecute"] = result;
-					});
-			   /*
-			  },
-					function(err){
-			      if(err){
-			          console.log("error ocurred in each",err);
-			      }else{
-			        console.log(`finished processing file: ${file.originalname}`);
+		     //carry out your file operations here and pass callback at the end
+		     console.log(`Processing File: ${util.inspect(file, {showHidden: false, depth: null}) }`);
+				 var args = [
+			 	'copy',
+			 	`${webServerConfig.upload_dir}\\${file.filename}`,
+			 	`${proj.staging_path}\\${rs.schema}\\${file.originalname}`
+				];
+				restResult["upload_file"] = file.originalname
+				console.log(`Copy params: ${args}`);
+				cli.cliExecute(args)
+				.then(function(result){
+						console.log(`Result: `, result.stdout);
+						if(result.stderr){
+							console.log(`stderr: ${result.stderr}`);
+						}
+						restResult["CopyFiles"] = result;
+				});
 
-			     }
-					 */
-			  //}); //filesArray
 				console.log("Start Packaging Here")
 					dbmApi.dbmApi("package", {}, {"projectId" : context.project_id}).then(function(result){
 						try{

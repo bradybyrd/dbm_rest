@@ -120,7 +120,7 @@ function assembleArgs(action, params, opts){
     args.push(`"${cliConfig.general.token}"`);
   }
   // TESTING
-  args = ["dir","/w","C:\\Automation\\BADMP"]
+  //args = ["dir","/w","C:\\Automation\\BADMP"]
   return args;
 }
 
