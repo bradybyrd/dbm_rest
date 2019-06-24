@@ -79,3 +79,17 @@ npm WARN dbm_rest@1.0.0 No repository field.
 
 + supertest@4.0.2
 added 15 packages in 3.313s
+
+
+
+https://dmaestro.server.net/<webapp>   => localhost:88
+https://dmaestro.server.net/API => localhost:3001
+https://dmaestro.server.net/admin => localhost:8016
+
+
+#=> BOT Functionality
+@dbmbot deploy V1.0.1 to DEV_RS in project HR
+dbmbot - JOB-2143: deploying  V1.0.1 to DEV_RS in project HR
+@dbmbot JOB-2143 status
+dbmbot JOB-2143 status: Error
+@dbmbot wtf
